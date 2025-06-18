@@ -9,10 +9,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Action;
@@ -23,6 +21,7 @@ public class MainViewModel extends AndroidViewModel {
 
     private NoteDatabase noteDatabase;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private MutableLiveData<List<Note>> notes = new MutableLiveData<>();
 
     public MainViewModel(@NonNull Application application) {
         super(application);
@@ -30,23 +29,23 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<Note>> getNotes() {
-        return noteDatabase.notesDao().getNotes();
+        return notes;
     }
 
-   /* public void refreshList() {
+    public void refreshList() {
         Disposable disposable = noteDatabase.notesDao().getNotes()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<Note>>() {
                     @Override
                     public void accept(List<Note> notesFromDB) throws Throwable {
-                        Log.d("LEE", notesFromDB.toString());
                         notes.setValue(notesFromDB);
                     }
                 });
         compositeDisposable.add(disposable);
     }
-*/
+
+
     public void remove(Note note) {
         Disposable disposable = noteDatabase.notesDao().remove(note.getId())
                 .subscribeOn(Schedulers.io())
@@ -55,6 +54,7 @@ public class MainViewModel extends AndroidViewModel {
                     @Override
                     public void run() throws Throwable {
                         Log.d("MainViewModel", "Removed: " + note.getId());
+                        refreshList();
                     }
                 });
 

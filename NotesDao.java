@@ -16,7 +16,7 @@ import io.reactivex.rxjava3.core.Single;
 public interface NotesDao {
 
     @Query("SELECT * FROM notes")
-    LiveData<List<Note>> getNotes();
+    Single<List<Note>> getNotes();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable add(Note note);
