@@ -1,4 +1,4 @@
-package xyz.losi.leestick;
+package xyz.losi.leestick.ui.main;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import xyz.losi.leestick.R;
+import xyz.losi.leestick.data.db.Note;
 
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHolder> {
 

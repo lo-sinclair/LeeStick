@@ -1,4 +1,4 @@
-package xyz.losi.leestick;
+package xyz.losi.leestick.ui.main;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,11 +10,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
+
+import xyz.losi.leestick.R;
+import xyz.losi.leestick.data.db.Note;
+import xyz.losi.leestick.ui.addnote.AddNoteActivity;
 
 public class MainActivity extends AppCompatActivity {
 

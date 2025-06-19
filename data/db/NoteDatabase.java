@@ -1,4 +1,4 @@
-package xyz.losi.leestick;
+package xyz.losi.leestick.data.db;
 
 import android.app.Application;
 

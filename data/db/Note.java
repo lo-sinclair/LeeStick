@@ -1,8 +1,10 @@
-package xyz.losi.leestick;
+package xyz.losi.leestick.data.db;
 
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+
+import xyz.losi.leestick.model.NoteColorType;
 
 @Entity(tableName = "notes")
 public class Note {

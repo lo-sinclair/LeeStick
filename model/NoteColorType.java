@@ -1,8 +1,10 @@
-package xyz.losi.leestick;
+package xyz.losi.leestick.model;
 
 import android.content.Context;
 
 import androidx.core.content.ContextCompat;
+
+import xyz.losi.leestick.R;
 
 public enum NoteColorType {
     YELLOW(R.color.yellow, R.string.yellow_icon),

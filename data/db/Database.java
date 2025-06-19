@@ -1,10 +1,9 @@
-package xyz.losi.leestick;
+package xyz.losi.leestick.data.db;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-import xyz.losi.leestick.utils.Logger;
+import xyz.losi.leestick.model.NoteColorType;
 
 public class Database {
 

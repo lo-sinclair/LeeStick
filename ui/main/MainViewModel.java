@@ -1,4 +1,4 @@
-package xyz.losi.leestick;
+package xyz.losi.leestick.ui.main;
 
 import android.app.Application;
 import android.util.Log;
@@ -6,19 +6,17 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Completable;
-import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Action;
 import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import xyz.losi.leestick.data.db.Note;
+import xyz.losi.leestick.data.db.NoteDatabase;
 
 public class MainViewModel extends AndroidViewModel {
 

@@ -1,4 +1,4 @@
-package xyz.losi.leestick;
+package xyz.losi.leestick.ui.addnote;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -12,6 +12,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+
+import xyz.losi.leestick.model.NoteColorType;
+import xyz.losi.leestick.R;
+import xyz.losi.leestick.data.db.Note;
 
 public class AddNoteActivity extends AppCompatActivity {
 
