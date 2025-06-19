@@ -16,11 +16,11 @@ import io.reactivex.rxjava3.core.Single;
 public interface NotesDao {
 
     @Query("SELECT * FROM notes")
-    List<Note> getNotes();
+    LiveData<List<Note>> getNotes();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void add(Note note);
+    Completable add(Note note);
 
     @Query(("DELETE FROM notes WHERE id = :id"))
-    void remove(int id);
+    Completable remove(int id);
 }
