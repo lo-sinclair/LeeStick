@@ -39,7 +39,6 @@ public class AddNoteActivity extends AppCompatActivity {
                 if (shouldClose) {
                     finish();
                 }
-
             }
         });
 
@@ -60,7 +59,7 @@ public class AddNoteActivity extends AppCompatActivity {
 
         for (NoteColorType color : NoteColorType.values()) {
             RadioButton radioButton = new RadioButton(this);
-            radioButton.setText(color.getEmoji(this));
+            radioButton.setText(color.getEmoji());
             radioButton.setTag(color.name());
             radioGroupColorNote.addView(radioButton);
             if(color.isDefaultCheck()) {
