@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -20,7 +19,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -31,9 +29,7 @@ import xyz.losi.leestick.R;
 import xyz.losi.leestick.data.db.Note;
 import xyz.losi.leestick.model.NoteColorType;
 import xyz.losi.leestick.notification.NotificationHelper;
-import xyz.losi.leestick.notification.NotificationService;
 import xyz.losi.leestick.ui.addnote.AddNoteActivity;
-import xyz.losi.leestick.utils.NoteFormatter;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Создание канала (один раз, можно вынести в onCreate)
+        NotificationHelper.createNotificationChannel(MainActivity.this);
 
         for (NoteColorType color : NoteColorType.values()) {
             color.initEmoji(getApplicationContext());
@@ -67,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
             public void onChanged(List<Note> notes) {
                 notesAdapter.setNotes(notes);
 
-                Intent serviceIntent = new Intent(MainActivity.this, NotificationService.class);
+                /*Intent serviceIntent = new Intent(MainActivity.this, NotificationService.class);
                 serviceIntent.putExtra("title", "Мои заметки");
                 serviceIntent.putExtra("text", NoteFormatter.formatList(notes));
 
@@ -79,7 +77,10 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     // API 25- (Android 7 и ниже)
                     startService(serviceIntent);
-                }
+                }*/
+
+                // Показ кастомного уведомления
+                NotificationHelper.buildNotification(MainActivity.this, notes);
             }
         });
 

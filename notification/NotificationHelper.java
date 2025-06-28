@@ -18,9 +18,11 @@ import xyz.losi.leestick.data.db.Note;
 import xyz.losi.leestick.utils.NoteFormatter;
 
 public class NotificationHelper {
-    private static final String CHANNEL_ID = "notes_channel_id";
+    private static final String CHANNEL_ID = "leestick_notes_channel_id";
     private static  final String CHANNEL_NAME = "Заметки";
     private static  final String CHANNEL_DESCRIPTION = "Показывает ваши заметки как уведомления";
+
+
 
     public static void createNotificationChannel(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -39,24 +41,26 @@ public class NotificationHelper {
         }
     }
 
-    public static Notification buildNotification(Context context, String title, String text) {
+    public static void buildNotification(Context context, List<Note> notes) {
+        RemoteViews collapsedView = new RemoteViews(context.getPackageName(), R.layout.notification_notes);
+        RemoteViews expandedView = new RemoteViews(context.getPackageName(), R.layout.notification_notes);
 
+        String noteText = NoteFormatter.formatList(notes);
+        collapsedView.setTextViewText(R.id.textNotes, noteText);
+        expandedView.setTextViewText(R.id.textNotes, noteText);
 
-        return new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_baseline_sticky_note_2_24)
-                .setContentTitle("📝 " + title)
-                .setContentText(text)
-                /*.setStyle(new NotificationCompat.BigPictureStyle()
-                        .bigPicture(BitmapFactory.decodeResource(context.getResources(), R.drawable.seacat2))
-                        .bigLargeIcon(null))*/
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
-                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.leestick2)) // большая иконка
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_REMINDER)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_baseline_local_florist_24)
+                .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
+                .setCustomContentView(collapsedView)
+                .setCustomBigContentView(expandedView)
+                .setSound(null)
+                .setDefaults(0)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setOngoing(true) // нельзя смахнуть
-                .setAutoCancel(false)
-                .setOnlyAlertOnce(false)
-                .build();
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setOngoing(true);
+
+        NotificationManagerCompat manager = NotificationManagerCompat.from(context);
+        manager.notify(1, builder.build());
     }
 }
