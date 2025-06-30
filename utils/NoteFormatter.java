@@ -9,8 +9,7 @@ public class NoteFormatter {
         StringBuilder stringBuilder = new StringBuilder();
 
         for(Note note : notes) {
-            stringBuilder.append(note.getColor().getEmoji())
-                    .append(" ")
+            stringBuilder.append(" ")
                     .append(note.getText())
                     .append("\n");
         }

@@ -1,5 +1,6 @@
 package xyz.losi.leestick.ui.main;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,11 +46,13 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         return new NotesViewHolder(view);
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     public void onBindViewHolder(NotesViewHolder viewHolder, int position) {
         Note note = notes.get(position);
         viewHolder.textViewNote.setText(note.getText());
-        viewHolder.textViewNote.setBackgroundColor(note.getColor().getColor(viewHolder.itemView.getContext()));
+        //viewHolder.textViewNote.setBackgroundColor(note.getIconColor().getColor(viewHolder.itemView.getContext()));
+        viewHolder.textViewNote.setBackgroundColor(note.getIconColor().getColor(viewHolder.itemView.getContext()));
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

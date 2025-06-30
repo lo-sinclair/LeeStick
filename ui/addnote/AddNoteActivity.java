@@ -7,23 +7,30 @@ import androidx.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import xyz.losi.leestick.model.NoteColorType;
 import xyz.losi.leestick.R;
 import xyz.losi.leestick.data.db.Note;
+import xyz.losi.leestick.model.NoteIconType;
+import xyz.losi.leestick.utils.Logger;
+import xyz.losi.leestick.utils.ViewUtils;
 
 public class AddNoteActivity extends AppCompatActivity {
 
     private AddNoteViewModel viewModel;
 
     private EditText editTextNote;
-    private RadioGroup radioGroupColorNote;
     private Button buttonSave;
+    private LinearLayout colorContainer;
+    private NoteIconType.IconColor selectedColor;
 
 
     @Override
@@ -53,18 +60,55 @@ public class AddNoteActivity extends AppCompatActivity {
 
     private void initViews() {
         editTextNote = findViewById(R.id.editTextNote);
-
-        radioGroupColorNote = findViewById(R.id.radioGroupColorNote);
+        colorContainer = findViewById(R.id.colorContainer);
         buttonSave = findViewById(R.id.buttonSave);
 
-        for (NoteColorType color : NoteColorType.values()) {
-            RadioButton radioButton = new RadioButton(this);
-            radioButton.setText(color.getEmoji());
-            radioButton.setTag(color.name());
-            radioGroupColorNote.addView(radioButton);
-            if(color.isDefaultCheck()) {
-                radioGroupColorNote.check(radioButton.getId());
+        for (NoteIconType.IconColor color : NoteIconType.IconColor.values()) {
+            FrameLayout frame = new FrameLayout(this);
+            LinearLayout.LayoutParams frameParams = new LinearLayout.LayoutParams(
+                    ViewUtils.dpToPx(this, 30), ViewUtils.dpToPx(this, 30));
+            frameParams.setMargins(ViewUtils.dpToPx(this, 4), 0, ViewUtils.dpToPx(this, 4), 0);
+            frame.setLayoutParams(frameParams);
+
+
+            View colorSquare = new View(this);
+            FrameLayout.LayoutParams squareParams = new FrameLayout.LayoutParams(
+                    //FrameLayout.LayoutParams.MATCH_PARENT,
+                    ViewUtils.dpToPx(this, 22),
+                    ViewUtils.dpToPx(this, 22),
+                    Gravity.CENTER
+            );
+
+            colorSquare.setLayoutParams(squareParams);
+            colorSquare.setBackgroundColor(color.getColor(this));
+            colorSquare.setTag(color);
+
+            frame.addView(colorSquare);
+            frame.setTag(R.id.color_frame_tag, frame);
+            frame.setTag(R.id.color_square_tag, colorSquare);
+
+            // Если первый — сразу выбираем
+            if (selectedColor == null) {
+                selectedColor = color;
+                frame.setBackgroundResource(R.drawable.selected_square_border);
+            } else {
+                frame.setBackground(null);
             }
+
+            frame.setOnClickListener(v -> {
+                resetSelection();
+                v.setBackgroundResource(R.drawable.selected_square_border);
+                selectedColor = (NoteIconType.IconColor) colorSquare.getTag();
+            });
+
+            colorContainer.addView(frame);
+        }
+    }
+
+    private void resetSelection() {
+        for (int i = 0; i < colorContainer.getChildCount(); i++) {
+            View child = colorContainer.getChildAt(i); // FrameLayout
+            child.setBackground(null); // убираем рамку
         }
     }
 
@@ -72,10 +116,7 @@ public class AddNoteActivity extends AppCompatActivity {
 
         String text = editTextNote.getText().toString().trim();
 
-        RadioButton selectedRadio = findViewById(radioGroupColorNote.getCheckedRadioButtonId());
-        NoteColorType color = NoteColorType.valueOf(selectedRadio.getTag().toString());
-
-        Note note = new Note(0, text, color);
+        Note note = new Note(0, text, selectedColor);
 
         viewModel.saveNote(note);
 

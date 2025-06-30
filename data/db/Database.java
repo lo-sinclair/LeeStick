@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import xyz.losi.leestick.model.NoteColorType;
+import xyz.losi.leestick.model.NoteIconType;
 
 public class Database {
 
@@ -13,11 +14,11 @@ public class Database {
 
     private Database() {
 
-        notes.add(new Note(1, "Покормить кота", NoteColorType.GREEN));
-        notes.add(new Note(2, "Выбрать шторы", NoteColorType.BLUE));
-        notes.add(new Note(3, "Помыть посуду", NoteColorType.GREEN));
-        notes.add(new Note(4, "Учить JavaScript", NoteColorType.RED));
-        notes.add(new Note(5, "Базарить с лосём", NoteColorType.YELLOW));
+        notes.add(new Note(1, "Покормить кота", NoteIconType.IconColor.GREEN));
+        notes.add(new Note(2, "Выбрать шторы", NoteIconType.IconColor.BLUE));
+        notes.add(new Note(3, "Помыть посуду", NoteIconType.IconColor.GREEN));
+        notes.add(new Note(4, "Учить JavaScript", NoteIconType.IconColor.RED));
+        notes.add(new Note(5, "Базарить с лосём", NoteIconType.IconColor.YELLOW));
 
         /*for (int i = 0; i <= 6; i++) {
             Random random = new Random();

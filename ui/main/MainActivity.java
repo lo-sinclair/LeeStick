@@ -46,9 +46,9 @@ public class MainActivity extends AppCompatActivity {
         // Создание канала (один раз, можно вынести в onCreate)
         NotificationHelper.createNotificationChannel(MainActivity.this);
 
-        for (NoteColorType color : NoteColorType.values()) {
+        /*for (NoteColorType color : NoteColorType.values()) {
             color.initEmoji(getApplicationContext());
-        }
+        }*/
 
         setContentView(R.layout.activity_main);
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);

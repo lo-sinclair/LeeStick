@@ -4,25 +4,25 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-import xyz.losi.leestick.model.NoteColorType;
+import xyz.losi.leestick.model.NoteIconType;
 
 @Entity(tableName = "notes")
 public class Note {
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String text;
-    private NoteColorType color;
+    private NoteIconType.IconColor iconColor;
 
-    public Note(int id, String text, NoteColorType color) {
+    public Note(int id, String text, NoteIconType.IconColor iconColor) {
         this.id = id;
         this.text = text;
-        this.color = color;
+        this.iconColor = iconColor;
     }
 
     @Ignore
-    public Note(String text, NoteColorType color) {
+    public Note(String text, NoteIconType.IconColor color) {
         this.text = text;
-        this.color = color;
+        this.iconColor = color;
     }
 
     public int getId() {
@@ -41,12 +41,12 @@ public class Note {
         this.text = text;
     }
 
-    public NoteColorType getColor() {
-        return color;
+    public NoteIconType.IconColor getIconColor() {
+        return iconColor;
     }
 
-    public void setColor(NoteColorType color) {
-        this.color = color;
+    public void setIconColor(NoteIconType.IconColor iconColor) {
+        this.iconColor = iconColor;
     }
 
     @Override
@@ -54,7 +54,7 @@ public class Note {
         return "Note{" +
                 "id=" + id +
                 ", text='" + text + '\'' +
-                ", color=" + color +
+                ", iconColor=" + iconColor +
                 '}';
     }
 }

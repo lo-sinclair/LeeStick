@@ -36,10 +36,10 @@ public class MainViewModel extends AndroidViewModel {
         Disposable disposable = noteDatabase.notesDao().remove(note.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action() {
+                .subscribe(new Consumer<Integer>() {
                     @Override
-                    public void run() throws Throwable {
-                        Log.d("MainViewModel", "Removed: " + note.getId());
+                    public void accept(Integer rowsDeleted) {
+                        Log.d("MainViewModel", "Removed rows: " + rowsDeleted);
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -49,7 +49,6 @@ public class MainViewModel extends AndroidViewModel {
                 });
 
         compositeDisposable.add(disposable);
-
      }
 
    /* private Single<List<Note>> getNotesRx() {

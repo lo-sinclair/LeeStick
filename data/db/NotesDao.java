@@ -9,6 +9,7 @@ import androidx.room.Query;
 import java.util.List;
 
 import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
 import xyz.losi.leestick.data.db.Note;
 
 @Dao
@@ -23,6 +24,6 @@ public interface NotesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable add(Note note);
 
-    @Query(("DELETE FROM notes WHERE id = :id"))
-    Completable remove(int id);
+    @Query("DELETE FROM notes WHERE id = :id")
+    Single<Integer> remove(int id);
 }
