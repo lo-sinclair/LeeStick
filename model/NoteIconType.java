@@ -31,14 +31,20 @@ public class NoteIconType {
     }
 
     public enum IconStyle {
-        SQUARE("square_"),
-        CIRCLE("circle_"),
-        CHECK("check_");
+        SQUARE("icon_square_", "Квадратные"),
+        CIRCLE("icon_circle_", "Круглые"),
+        CHECK("icon_check_", "Галочки");
 
         private final String prefix;
+        private final String name;
 
-        IconStyle(String prefix) {
+        public String getName() {
+            return name;
+        }
+
+        IconStyle(String prefix, String name) {
             this.prefix = prefix;
+            this.name = name;
         }
 
         public int getIconResId(Context context, IconColor color) {

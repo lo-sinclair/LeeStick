@@ -1,11 +1,14 @@
 package xyz.losi.leestick.ui.main;
 
 import android.app.Application;
+import android.app.Notification;
+import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 
 import java.util.List;
 
@@ -17,6 +20,8 @@ import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import xyz.losi.leestick.data.db.Note;
 import xyz.losi.leestick.data.db.NoteDatabase;
+import xyz.losi.leestick.notification.NotificationHelper;
+import xyz.losi.leestick.utils.SettingsManager;
 
 public class MainViewModel extends AndroidViewModel {
 
@@ -51,23 +56,36 @@ public class MainViewModel extends AndroidViewModel {
         compositeDisposable.add(disposable);
      }
 
-   /* private Single<List<Note>> getNotesRx() {
-        return Single.fromCallable(new Callable<List<Note>>() {
+    public void updateNotificationEnabled(Context context, boolean enabled) {
+        if (enabled) {
+            getNotes().observeForever(new Observer<List<Note>>() {
+                @Override
+                public void onChanged(List<Note> notes) {
+                    NotificationHelper.buildNotification(context.getApplicationContext(), notes, Notification.VISIBILITY_PUBLIC);
+                    getNotes().removeObserver(this);
+                }
+            });
+        } else {
+            NotificationHelper.cancelNotification(context.getApplicationContext());
+        }
+    }
+
+    public void updateNotificationAppearance(Context context) {
+        getNotes().observeForever(new Observer<List<Note>>() {
             @Override
-            public List<Note> call() throws Exception {
-                return noteDatabase.notesDao().getNotes();
+            public void onChanged(List<Note> notes) {
+                boolean showOnLockScreen = SettingsManager.getShowOnLockscreen(context);
+                if (!showOnLockScreen) {
+                    NotificationHelper.cancelNotification(context.getApplicationContext());
+                } else {
+                    // Всегда показываем с VISIBILITY_PUBLIC, если нужно
+                    NotificationHelper.buildNotification(context.getApplicationContext(), notes, Notification.VISIBILITY_PUBLIC);
+                }
+                getNotes().removeObserver(this);
             }
         });
     }
 
-    private Completable removeRx(Note note) {
-        return Completable.fromAction(new Action() {
-            @Override
-            public void run() throws Throwable {
-                noteDatabase.notesDao().remove(note.getId());
-            }
-        });
-     }*/
 
 
     @Override

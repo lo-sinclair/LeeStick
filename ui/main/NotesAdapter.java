@@ -1,9 +1,11 @@
 package xyz.losi.leestick.ui.main;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,6 +16,8 @@ import java.util.List;
 
 import xyz.losi.leestick.R;
 import xyz.losi.leestick.data.db.Note;
+import xyz.losi.leestick.model.NoteColorType;
+import xyz.losi.leestick.utils.SettingsManager;
 
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHolder> {
 
@@ -50,9 +54,12 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
     @Override
     public void onBindViewHolder(NotesViewHolder viewHolder, int position) {
         Note note = notes.get(position);
+        Context context = viewHolder.itemView.getContext();
         viewHolder.textViewNote.setText(note.getText());
-        //viewHolder.textViewNote.setBackgroundColor(note.getIconColor().getColor(viewHolder.itemView.getContext()));
-        viewHolder.textViewNote.setBackgroundColor(note.getIconColor().getColor(viewHolder.itemView.getContext()));
+        //viewHolder.textViewNote.setBackgroundColor(SettingsManager.getNoteColor(context).getColor(context));
+        viewHolder.textViewNote.setBackgroundColor(NoteColorType.YELLOW.getColor(context));
+
+        viewHolder.colorViewNote.setBackgroundColor(note.getIconColor().getColor(context));
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,11 +78,13 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
 
     class NotesViewHolder extends RecyclerView.ViewHolder {
         private TextView textViewNote;
+        private FrameLayout colorViewNote;
 
         public NotesViewHolder(@NonNull View itemView) {
             super(itemView);
 
             textViewNote = itemView.findViewById(R.id.textViewNote);
+            colorViewNote = itemView.findViewById(R.id.colorViewNote);
         }
     }
 

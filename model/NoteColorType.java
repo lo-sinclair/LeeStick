@@ -32,13 +32,6 @@ public enum NoteColorType {
         this.defaultCheck = false;
     }
 
-   /* public void initEmoji(Context context) {
-        if (emoji == null) {
-            emoji = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-                    ? context.getString(emojiResId)
-                    : context.getString(emojiLegacyResId);
-        }
-    }*/
 
     public int getColor(Context context) {
         return ContextCompat.getColor(context, colorResId);
@@ -52,3 +45,12 @@ public enum NoteColorType {
         return defaultCheck;
     }
 }
+
+
+   /* public void initEmoji(Context context) {
+        if (emoji == null) {
+            emoji = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+                    ? context.getString(emojiResId)
+                    : context.getString(emojiLegacyResId);
+        }
+    }*/

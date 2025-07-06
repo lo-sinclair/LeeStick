@@ -13,14 +13,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 
-import xyz.losi.leestick.model.NoteColorType;
 import xyz.losi.leestick.R;
 import xyz.losi.leestick.data.db.Note;
 import xyz.losi.leestick.model.NoteIconType;
 import xyz.losi.leestick.utils.Logger;
+import xyz.losi.leestick.utils.SettingsManager;
 import xyz.losi.leestick.utils.ViewUtils;
 
 public class AddNoteActivity extends AppCompatActivity {
@@ -87,18 +85,28 @@ public class AddNoteActivity extends AppCompatActivity {
             frame.setTag(R.id.color_frame_tag, frame);
             frame.setTag(R.id.color_square_tag, colorSquare);
 
+
             // Если первый — сразу выбираем
-            if (selectedColor == null) {
+            /*if (selectedColor == null) {
+                selectedColor = color;
+                frame.setBackgroundResource(R.drawable.selected_square_border);
+            } else {
+                frame.setBackground(null);
+            }*/
+            NoteIconType.IconColor defaultNoteIconColor = SettingsManager.getDefaultNoteIconColor(this);
+            if(color == defaultNoteIconColor) {
                 selectedColor = color;
                 frame.setBackgroundResource(R.drawable.selected_square_border);
             } else {
                 frame.setBackground(null);
             }
 
+
             frame.setOnClickListener(v -> {
                 resetSelection();
                 v.setBackgroundResource(R.drawable.selected_square_border);
                 selectedColor = (NoteIconType.IconColor) colorSquare.getTag();
+                SettingsManager.setDefaultNoteIconColor(this, selectedColor);
             });
 
             colorContainer.addView(frame);
