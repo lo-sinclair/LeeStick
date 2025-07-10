@@ -19,7 +19,6 @@ public class SettingsManager {
 
     public static NoteIconType.IconStyle getIconStyle(Context context) {
         String name = getPrefs(context).getString("note_icon_style", NoteIconType.IconStyle.CIRCLE.name());
-        Logger.dd(name);
         return NoteIconType.IconStyle.valueOf(name);
     }
 
@@ -56,5 +55,19 @@ public class SettingsManager {
     public static boolean getShowOnLockscreen(Context context) {
         return getPrefs(context).getBoolean("show_on_lockscreen", true);
     }
+
+    public static void setFontSize(Context context, float size) {
+        getPrefs(context).edit().putString("note_font_size", String.valueOf(size)).apply();
+    }
+
+    public static float getFontSize(Context context) {
+        try {
+            return Float.parseFloat(getPrefs(context).getString("note_font_size", "16.0"));
+        } catch (NumberFormatException e) {
+            return 16.0f; // fallback
+        }
+    }
+
+
 }
 

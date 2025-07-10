@@ -123,10 +123,7 @@ public class AddNoteActivity extends AppCompatActivity {
     private void saveNote(){
 
         String text = editTextNote.getText().toString().trim();
-
-        Note note = new Note(0, text, selectedColor);
-
-        viewModel.saveNote(note);
+        viewModel.saveNote(text, selectedColor);
 
     }
 

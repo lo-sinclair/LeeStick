@@ -12,17 +12,20 @@ public class Note {
     private int id;
     private String text;
     private NoteIconType.IconColor iconColor;
+    private float weight;
 
-    public Note(int id, String text, NoteIconType.IconColor iconColor) {
+    public Note(int id, String text, NoteIconType.IconColor iconColor, float weight) {
         this.id = id;
         this.text = text;
         this.iconColor = iconColor;
+        this.weight = weight;
     }
 
     @Ignore
-    public Note(String text, NoteIconType.IconColor color) {
+    public Note(String text, NoteIconType.IconColor color, float weight) {
         this.text = text;
         this.iconColor = color;
+        this.weight = weight;
     }
 
     public int getId() {
@@ -47,6 +50,14 @@ public class Note {
 
     public void setIconColor(NoteIconType.IconColor iconColor) {
         this.iconColor = iconColor;
+    }
+
+    public float getWeight() {
+        return weight;
+    }
+
+    public void setWeight(float weight) {
+        this.weight = weight;
     }
 
     @Override

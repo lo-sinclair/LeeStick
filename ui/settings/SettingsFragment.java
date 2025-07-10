@@ -45,7 +45,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         ListPreference iconTypePref = new ListPreference(requireContext());
         iconTypePref.setKey("note_icon_style");
         iconTypePref.setTitle("Тип маркеров");
-        iconTypePref.setSummary("Выберите стиль иконок");
+        iconTypePref.setSummary("Выберите стиль иконок-маркеров");
 
         NoteIconType.IconStyle[] values = NoteIconType.IconStyle.values();
         String[] entries = new String[values.length];
@@ -79,6 +79,28 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         colorPref.setTitle("Цвет фона");
         colorPref.setSummary("Выберите цвет стикера");
         screen.addPreference(colorPref);
+
+
+        // 4. Размер шрифта
+        ListPreference fontSizePref = new ListPreference(requireContext());
+        fontSizePref.setKey("note_font_size");
+        fontSizePref.setTitle("Размер шрифта");
+        fontSizePref.setSummary("Выберите размер текста стикера");
+
+        String[] fontSizeLabels = {"Очень мелкий", "Мелкий", "Средний", "Крупный"};
+        String[] fontSizeValues = {"12", "14", "16", "18"};
+
+        fontSizePref.setEntries(fontSizeLabels);
+        fontSizePref.setEntryValues(fontSizeValues);
+        fontSizePref.setDefaultValue("16");
+
+        screen.addPreference(fontSizePref);
+
+        fontSizePref.setOnPreferenceChangeListener((preference, newValue) -> {
+            MainViewModel viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
+            viewModel.updateNotificationAppearance(requireContext());
+            return true;
+        });
     }
 }
 

@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import xyz.losi.leestick.R;
@@ -76,7 +77,15 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         return notes.size();
     }
 
-    class NotesViewHolder extends RecyclerView.ViewHolder {
+    public void swapItems(int from, int to) {
+        if(from < 0 || to < 0 || from >= notes.size() || to >= notes.size()) {
+            return;
+        }
+        Collections.swap(notes, from, to);
+        notifyItemChanged(from, to);
+    }
+
+    class NotesViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder{
         private TextView textViewNote;
         private FrameLayout colorViewNote;
 
@@ -86,9 +95,28 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
             textViewNote = itemView.findViewById(R.id.textViewNote);
             colorViewNote = itemView.findViewById(R.id.colorViewNote);
         }
+
+        @Override
+        public void onItemSelected() {
+            itemView.setAlpha(0.7f);
+            itemView.setScaleX(1.03f);
+            itemView.setScaleY(1.03f);
+        }
+
+        @Override
+        public void onItemClear() {
+            itemView.setAlpha(1.0f);
+            itemView.setScaleX(1.0f);
+            itemView.setScaleY(1.0f);
+        }
     }
 
     interface onNoteClickListener {
         void onNoteClick(Note note);
+    }
+
+    interface ItemTouchHelperViewHolder {
+        void onItemSelected(); // когда перетаскиваем
+        void onItemClear();    // когда отпущено
     }
 }

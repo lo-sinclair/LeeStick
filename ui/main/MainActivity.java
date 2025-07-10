@@ -2,6 +2,7 @@ package xyz.losi.leestick.ui.main;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -20,6 +21,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
+import io.reactivex.rxjava3.annotations.Nullable;
 import xyz.losi.leestick.R;
 import xyz.losi.leestick.data.db.Note;
 import xyz.losi.leestick.notification.NotificationHelper;
@@ -72,16 +74,20 @@ public class MainActivity extends AppCompatActivity {
         });
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
-                new ItemTouchHelper.SimpleCallback(0,
-                ItemTouchHelper.RIGHT
-        ) {
+                new ItemTouchHelper.SimpleCallback(
+                        ItemTouchHelper.UP | ItemTouchHelper.DOWN,
+                        ItemTouchHelper.RIGHT
+         ) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView,
                                   @NonNull RecyclerView.ViewHolder viewHolder,
                                   @NonNull RecyclerView.ViewHolder target) {
-                return false;
+                int from = viewHolder.getAdapterPosition();
+                int to = target.getAdapterPosition();
+                notesAdapter.swapItems(from, to);
+                viewModel.onNoteMoved(notesAdapter.getNotes(), from, to);
+                return true;
             }
-
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder,
@@ -90,6 +96,22 @@ public class MainActivity extends AppCompatActivity {
                 Note note = notesAdapter.getNotes().get(position);
 
                 viewModel.remove(note);
+            }
+
+            @Override
+            public void onSelectedChanged(@Nullable RecyclerView.ViewHolder viewHolder, int actionState) {
+                super.onSelectedChanged(viewHolder, actionState);
+                if (actionState != ItemTouchHelper.ACTION_STATE_IDLE && viewHolder instanceof NotesAdapter.ItemTouchHelperViewHolder) {
+                    ((NotesAdapter.ItemTouchHelperViewHolder) viewHolder).onItemSelected();
+                }
+            }
+
+            @Override
+            public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                super.clearView(recyclerView, viewHolder);
+                if (viewHolder instanceof NotesAdapter.ItemTouchHelperViewHolder) {
+                    ((NotesAdapter.ItemTouchHelperViewHolder) viewHolder).onItemClear();
+                }
             }
         });
 
@@ -117,37 +139,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
-
-        /*MenuItem switchItem = menu.findItem(R.id.menu_lock_switch);
-
-        View actionView = switchItem.getActionView();
-        if (actionView == null) {
-            Log.e("MENU", "actionView is null!");
-            return true;
-        }
-
-        SwitchCompat switchCompat = actionView.findViewById(R.id.switchLockScreen);
-        if (switchCompat == null) {
-            Log.e("MENU", "switchCompat is null!");
-            return true;
-        }
-
-        // Всплывающая подсказка (только для Android 8.0+ и выше)
-        TooltipCompat.setTooltipText(switchCompat, getString(R.string.hint_lock_screen));
-
-        // Установка значения по умолчанию
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean showOnLockScreen = prefs.getBoolean("show_on_lock_screen", true);
-        switchCompat.setChecked(showOnLockScreen);
-
-        // Обработка нажатий
-        switchCompat.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean("show_on_lock_screen", isChecked);
-            editor.apply();
-            Toast.makeText(this, "Показывать на экране блокировки: " + isChecked, Toast.LENGTH_SHORT).show();
-        });*/
-
         return true;
     }
 
@@ -158,6 +149,22 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
+        if(item.getItemId() == R.id.action_delete_all) {
+            showDeleteAllConfirmationDialog();
+        }
+
         return super.onOptionsItemSelected(item);
     }
+
+    private void showDeleteAllConfirmationDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Удалить все заметки?")
+                .setMessage("Это действие нельзя отменить. Вы уверены?")
+                .setPositiveButton("Удалить", (dialog, which) -> {
+                    viewModel.removeAll();
+                })
+                .setNegativeButton("Отмена", null)
+                .show();
+    }
+
 }

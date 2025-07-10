@@ -15,15 +15,21 @@ import xyz.losi.leestick.data.db.Note;
 @Dao
 public interface NotesDao {
 
-    @Query("SELECT * FROM notes")
+    @Query("SELECT * FROM notes ORDER BY weight ASC")
     LiveData<List<Note>> getNotes();
 
-    @Query("SELECT * FROM notes")
+    @Query("SELECT * FROM notes ORDER BY weight ASC")
     List<Note> getNotesList();
+
+    @Query("SELECT MAX(weight) FROM notes")
+    float getMaxWeight();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable add(Note note);
 
     @Query("DELETE FROM notes WHERE id = :id")
     Single<Integer> remove(int id);
+
+    @Query("DELETE FROM notes")
+    Completable removeAll();
 }

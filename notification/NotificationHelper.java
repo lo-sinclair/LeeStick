@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -75,10 +76,12 @@ public class NotificationHelper {
                 collapsedView.setViewVisibility(lineId, visibility);
                 collapsedView.setImageViewResource(iconId, iconResId);
                 collapsedView.setTextViewText(textId, note.getText());
+                collapsedView.setTextViewTextSize(textId, TypedValue.COMPLEX_UNIT_SP, SettingsManager.getFontSize(context));
 
                 expandedView.setViewVisibility(lineId, visibility);
                 expandedView.setImageViewResource(iconId, iconResId);
                 expandedView.setTextViewText(textId, note.getText());
+                expandedView.setTextViewTextSize(textId, TypedValue.COMPLEX_UNIT_SP, SettingsManager.getFontSize(context));
             } else {
                 collapsedView.setViewVisibility(lineId, View.GONE);
                 expandedView.setViewVisibility(lineId, View.GONE);
