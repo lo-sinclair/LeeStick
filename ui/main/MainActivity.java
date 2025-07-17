@@ -25,6 +25,7 @@ import io.reactivex.rxjava3.annotations.Nullable;
 import xyz.losi.leestick.R;
 import xyz.losi.leestick.data.db.Note;
 import xyz.losi.leestick.notification.NotificationHelper;
+import xyz.losi.leestick.ui.NotesViewModelFactory;
 import xyz.losi.leestick.ui.addnote.AddNoteActivity;
 import xyz.losi.leestick.ui.settings.SettingsActivity;
 import xyz.losi.leestick.utils.SettingsManager;
@@ -50,7 +51,10 @@ public class MainActivity extends AppCompatActivity {
         }*/
 
         setContentView(R.layout.activity_main);
-        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        viewModel = new ViewModelProvider(
+                this,
+                new NotesViewModelFactory(getApplication())
+        ).get(MainViewModel.class);
 
         initViews();
 

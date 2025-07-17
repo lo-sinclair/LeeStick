@@ -17,6 +17,8 @@ import android.widget.LinearLayout;
 import xyz.losi.leestick.R;
 import xyz.losi.leestick.data.db.Note;
 import xyz.losi.leestick.model.NoteIconType;
+import xyz.losi.leestick.ui.NotesViewModelFactory;
+import xyz.losi.leestick.ui.main.MainViewModel;
 import xyz.losi.leestick.utils.Logger;
 import xyz.losi.leestick.utils.SettingsManager;
 import xyz.losi.leestick.utils.ViewUtils;
@@ -36,7 +38,10 @@ public class AddNoteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_note);
 
-        viewModel = new ViewModelProvider(this).get(AddNoteViewModel.class);
+        viewModel = new ViewModelProvider(
+                this,
+                new NotesViewModelFactory(getApplication())
+        ).get(AddNoteViewModel.class);
 
         viewModel.getShouldCloseScreen().observe(this, new Observer<Boolean>() {
             @Override
@@ -85,14 +90,6 @@ public class AddNoteActivity extends AppCompatActivity {
             frame.setTag(R.id.color_frame_tag, frame);
             frame.setTag(R.id.color_square_tag, colorSquare);
 
-
-            // Если первый — сразу выбираем
-            /*if (selectedColor == null) {
-                selectedColor = color;
-                frame.setBackgroundResource(R.drawable.selected_square_border);
-            } else {
-                frame.setBackground(null);
-            }*/
             NoteIconType.IconColor defaultNoteIconColor = SettingsManager.getDefaultNoteIconColor(this);
             if(color == defaultNoteIconColor) {
                 selectedColor = color;
@@ -123,7 +120,7 @@ public class AddNoteActivity extends AppCompatActivity {
     private void saveNote(){
 
         String text = editTextNote.getText().toString().trim();
-        viewModel.saveNote(text, selectedColor);
+        viewModel.saveNote(new Note(text, selectedColor, 0f));
 
     }
 

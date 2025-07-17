@@ -8,7 +8,6 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -17,21 +16,22 @@ import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import xyz.losi.leestick.data.db.Note;
 import xyz.losi.leestick.data.db.NoteDatabase;
-import xyz.losi.leestick.data.db.NotesDao;
+import xyz.losi.leestick.data.db.NotesRepository;
 import xyz.losi.leestick.model.NoteIconType;
 
 public class AddNoteViewModel extends AndroidViewModel {
-    private NotesDao notesDao;
+    //private NotesDao notesDao;
+    private final NotesRepository notesRepository;
     private MutableLiveData<Boolean> shouldCloseScreen = new MutableLiveData<>();
     CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-    public AddNoteViewModel(@NonNull Application application) {
+    public AddNoteViewModel(@NonNull Application application, NotesRepository repository, NotesRepository notesRepository) {
         super(application);
-        notesDao = NoteDatabase.getInstance(application).notesDao();
+        this.notesRepository = notesRepository;
     }
 
     public void saveNote(Note note) {
-        Disposable disposable = notesDao.add(note)
+        Disposable disposable = notesRepository.addNote(note)
                 .subscribeOn(Schedulers.io()) // в другом потоке
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action() {
@@ -48,22 +48,6 @@ public class AddNoteViewModel extends AndroidViewModel {
                 });
         compositeDisposable.add(disposable);
     }
-
-    public void saveNote(String text, NoteIconType.IconColor color) {
-        Disposable disposable = Single.fromCallable(() -> {
-            float maxWeight = notesDao.getMaxWeight();
-            float weight = Float.isNaN(maxWeight) ? 100f : maxWeight + 100f;
-            return new Note(text, color, weight);
-        })
-                .flatMapCompletable(note -> notesDao.add(note))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> shouldCloseScreen.setValue(true),
-                        throwable -> Log.e("AddNoteViewModel", "Error saveNote", throwable)
-                );
-        compositeDisposable.add(disposable);
-    }
-
 
     public MutableLiveData<Boolean> getShouldCloseScreen() {
         return shouldCloseScreen;

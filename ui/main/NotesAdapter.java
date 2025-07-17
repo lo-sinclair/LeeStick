@@ -85,6 +85,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         notifyItemChanged(from, to);
     }
 
+
     class NotesViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder{
         private TextView textViewNote;
         private FrameLayout colorViewNote;
