@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import xyz.losi.leestick.data.db.NoteDatabase;
 import xyz.losi.leestick.data.db.NotesDao;
 import xyz.losi.leestick.data.db.NotesRepository;
-import xyz.losi.leestick.ui.addnote.AddNoteViewModel;
+import xyz.losi.leestick.ui.addnote.AddEditNoteViewModel;
 import xyz.losi.leestick.ui.main.MainViewModel;
 
 public class NotesViewModelFactory implements ViewModelProvider.Factory {
@@ -28,8 +28,8 @@ public class NotesViewModelFactory implements ViewModelProvider.Factory {
 
         if (modelClass.isAssignableFrom(MainViewModel.class)) {
             return (T) new MainViewModel(application, repository);
-        } else if (modelClass.isAssignableFrom(AddNoteViewModel.class)) {
-            return (T) new AddNoteViewModel(application, repository, repository);
+        } else if (modelClass.isAssignableFrom(AddEditNoteViewModel.class)) {
+            return (T) new AddEditNoteViewModel(application, repository, repository);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }

@@ -1,6 +1,7 @@
 package xyz.losi.leestick.ui.addnote;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -18,30 +19,45 @@ import xyz.losi.leestick.R;
 import xyz.losi.leestick.data.db.Note;
 import xyz.losi.leestick.model.NoteIconType;
 import xyz.losi.leestick.ui.NotesViewModelFactory;
-import xyz.losi.leestick.ui.main.MainViewModel;
 import xyz.losi.leestick.utils.Logger;
 import xyz.losi.leestick.utils.SettingsManager;
 import xyz.losi.leestick.utils.ViewUtils;
 
-public class AddNoteActivity extends AppCompatActivity {
+public class AddEditNoteActivity extends AppCompatActivity {
 
-    private AddNoteViewModel viewModel;
+    private AddEditNoteViewModel viewModel;
 
     private EditText editTextNote;
     private Button buttonSave;
     private LinearLayout colorContainer;
     private NoteIconType.IconColor selectedColor;
+    private Note existingNote = null;
 
+    private static final String EXTRA_NOTE = "extra_note";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_note);
+        existingNote = getIntent().getParcelableExtra(EXTRA_NOTE);
+
+        if (getSupportActionBar() != null) {
+            if (existingNote != null) {
+                getSupportActionBar().setTitle("Редактировать заметку");
+            } else {
+                getSupportActionBar().setTitle("Добавить заметку");
+            }
+
+            // Не добавляем стрелку назад, если это отдельный экран
+            // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+        initViews();
 
         viewModel = new ViewModelProvider(
                 this,
                 new NotesViewModelFactory(getApplication())
-        ).get(AddNoteViewModel.class);
+        ).get(AddEditNoteViewModel.class);
 
         viewModel.getShouldCloseScreen().observe(this, new Observer<Boolean>() {
             @Override
@@ -52,7 +68,6 @@ public class AddNoteActivity extends AppCompatActivity {
             }
         });
 
-        initViews();
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,6 +80,18 @@ public class AddNoteActivity extends AppCompatActivity {
         editTextNote = findViewById(R.id.editTextNote);
         colorContainer = findViewById(R.id.colorContainer);
         buttonSave = findViewById(R.id.buttonSave);
+
+        NoteIconType.IconColor defaultNoteIconColor;
+        if (existingNote != null) {
+            defaultNoteIconColor = existingNote.getIconColor();
+            editTextNote.setText(existingNote.getText());
+            selectedColor = existingNote.getIconColor();
+            buttonSave.setText("Сохранить");
+        } else {
+            defaultNoteIconColor = SettingsManager.getDefaultNoteIconColor(this);
+        }
+
+        selectedColor = defaultNoteIconColor;
 
         for (NoteIconType.IconColor color : NoteIconType.IconColor.values()) {
             FrameLayout frame = new FrameLayout(this);
@@ -90,8 +117,7 @@ public class AddNoteActivity extends AppCompatActivity {
             frame.setTag(R.id.color_frame_tag, frame);
             frame.setTag(R.id.color_square_tag, colorSquare);
 
-            NoteIconType.IconColor defaultNoteIconColor = SettingsManager.getDefaultNoteIconColor(this);
-            if(color == defaultNoteIconColor) {
+            if(color.name().equals(defaultNoteIconColor.name())) {
                 selectedColor = color;
                 frame.setBackgroundResource(R.drawable.selected_square_border);
             } else {
@@ -118,13 +144,24 @@ public class AddNoteActivity extends AppCompatActivity {
     }
 
     private void saveNote(){
-
         String text = editTextNote.getText().toString().trim();
-        viewModel.saveNote(new Note(text, selectedColor, 0f));
+        if (existingNote != null) {
+            existingNote.setText(text);
+            existingNote.setIconColor(selectedColor);
+            viewModel.updateNote(existingNote);
+        } else {
+            viewModel.saveNote(new Note(text, selectedColor, 0f));
+        }
 
     }
 
     public static Intent newIntent(Context context){
-        return new Intent(context, AddNoteActivity.class);
+        return new Intent(context, AddEditNoteActivity.class);
+    }
+
+    public static Intent newIntent(Context context, Note note) {
+        Intent intent = new Intent(context, AddEditNoteActivity.class);
+        intent.putExtra(EXTRA_NOTE, note);
+        return intent;
     }
 }

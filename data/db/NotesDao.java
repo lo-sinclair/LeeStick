@@ -5,6 +5,7 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
@@ -26,6 +27,9 @@ public interface NotesDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable add(Note note);
+
+    @Update
+    Completable update(Note note);
 
     @Query("DELETE FROM notes WHERE id = :id")
     Single<Integer> remove(int id);

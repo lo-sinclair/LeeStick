@@ -6,13 +6,13 @@ import xyz.losi.leestick.model.NoteIconType;
 
 public class Converters {
     @TypeConverter
-    public static String fromIconColor(NoteIconType.IconColor color) {
-        return color == null ? null : color.name();
+    public static String fromIconColor(NoteIconType.IconColor value) {
+        return value == null ? null : value.name();
     }
 
     @TypeConverter
-    public static NoteIconType.IconColor toIconColor(String name) {
-        return name == null ? null : NoteIconType.IconColor.valueOf(name);
+    public static NoteIconType.IconColor toIconColor(String value) {
+        return value == null ? null : NoteIconType.IconColor.valueOf(value);
     }
 
 }

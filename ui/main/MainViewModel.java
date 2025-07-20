@@ -99,9 +99,9 @@ public class MainViewModel extends AndroidViewModel {
         if (isFirstRun) {
             List<Note> defaultNotes = Arrays.asList(
                     new Note("Выбрать шторы", NoteIconType.IconColor.BLUE, 100f),
-                    new Note(3, "Помыть посуду", NoteIconType.IconColor.GREEN, 200f),
-                    new Note(4, "Учить JavaScript", NoteIconType.IconColor.RED, 300f),
-                    new Note(5, "Базарить с лосём", NoteIconType.IconColor.YELLOW, 400f)
+                    new Note("Помыть посуду", NoteIconType.IconColor.GREEN, 200f),
+                    new Note("Учить JavaScript", NoteIconType.IconColor.RED, 300f),
+                    new Note("Базарить с лосём", NoteIconType.IconColor.YELLOW, 400f)
             );
             Disposable disposable = Observable.fromIterable(defaultNotes)
                     .flatMapCompletable(notesRepository::addNote)

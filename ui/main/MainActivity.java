@@ -26,7 +26,7 @@ import xyz.losi.leestick.R;
 import xyz.losi.leestick.data.db.Note;
 import xyz.losi.leestick.notification.NotificationHelper;
 import xyz.losi.leestick.ui.NotesViewModelFactory;
-import xyz.losi.leestick.ui.addnote.AddNoteActivity;
+import xyz.losi.leestick.ui.addnote.AddEditNoteActivity;
 import xyz.losi.leestick.ui.settings.SettingsActivity;
 import xyz.losi.leestick.utils.SettingsManager;
 
@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
                 new ItemTouchHelper.SimpleCallback(
                         ItemTouchHelper.UP | ItemTouchHelper.DOWN,
@@ -122,9 +123,14 @@ public class MainActivity extends AppCompatActivity {
         buttonAddNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = AddNoteActivity.newIntent(MainActivity.this);
+                Intent intent = AddEditNoteActivity.newIntent(MainActivity.this);
                 startActivity(intent);
             }
+        });
+
+        notesAdapter.setOnNoteClickListener(note -> {
+            Intent intent = AddEditNoteActivity.newIntent(this, note);
+            startActivity(intent);
         });
 
         itemTouchHelper.attachToRecyclerView(recyclerViewNotes);

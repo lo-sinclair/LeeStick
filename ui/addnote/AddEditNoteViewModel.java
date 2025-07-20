@@ -19,13 +19,13 @@ import xyz.losi.leestick.data.db.NoteDatabase;
 import xyz.losi.leestick.data.db.NotesRepository;
 import xyz.losi.leestick.model.NoteIconType;
 
-public class AddNoteViewModel extends AndroidViewModel {
+public class AddEditNoteViewModel extends AndroidViewModel {
     //private NotesDao notesDao;
     private final NotesRepository notesRepository;
     private MutableLiveData<Boolean> shouldCloseScreen = new MutableLiveData<>();
     CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-    public AddNoteViewModel(@NonNull Application application, NotesRepository repository, NotesRepository notesRepository) {
+    public AddEditNoteViewModel(@NonNull Application application, NotesRepository repository, NotesRepository notesRepository) {
         super(application);
         this.notesRepository = notesRepository;
     }
@@ -46,6 +46,15 @@ public class AddNoteViewModel extends AndroidViewModel {
                         Log.d("AddNoteViewModel", "Error saveNote");
                     }
                 });
+        compositeDisposable.add(disposable);
+    }
+
+    public void updateNote(Note note) {
+        Disposable disposable = notesRepository.updateNote(note)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> shouldCloseScreen.setValue(true),
+                        throwable -> Log.e("AddNoteViewModel", "Error updateNote", throwable));
         compositeDisposable.add(disposable);
     }
 

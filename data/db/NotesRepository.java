@@ -37,6 +37,11 @@ public class NotesRepository {
                 });
     }
 
+    /** Обновление заметки после редактирования */
+    public Completable updateNote(Note note) {
+        return notesDao.update(note);
+    }
+
     /** Обработка перемещения и пересчёт веса */
     public Completable moveNote(List<Note> notes, int from, int to) {
         if(from == to) return Completable.complete();

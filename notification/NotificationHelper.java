@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -51,6 +52,7 @@ public class NotificationHelper {
     }
 
     public static void buildNotification(Context context, List<Note> notes, int visibility) {
+
         RemoteViews collapsedView = new RemoteViews(context.getPackageName(), R.layout.notification_notes);
         RemoteViews expandedView = new RemoteViews(context.getPackageName(), R.layout.notification_notes);
 
