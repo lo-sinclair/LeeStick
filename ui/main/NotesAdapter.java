@@ -59,8 +59,13 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         viewHolder.textViewNote.setText(note.getText());
         //viewHolder.textViewNote.setBackgroundColor(SettingsManager.getNoteColor(context).getColor(context));
         viewHolder.textViewNote.setBackgroundColor(NoteColorType.YELLOW.getColor(context));
-
         viewHolder.colorViewNote.setBackgroundColor(note.getIconColor().getColor(context));
+
+        if (position >= 10) {
+            viewHolder.itemView.setAlpha(0.6f); // Полупрозрачность всей карточки
+        } else {
+            viewHolder.itemView.setAlpha(1f); // Нормальный вид
+        }
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,7 +87,11 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
             return;
         }
         Collections.swap(notes, from, to);
-        notifyItemChanged(from, to);
+        notifyItemMoved(from, to);
+
+        // Принудительно обновить обе позиции
+        notifyItemChanged(from);
+        notifyItemChanged(to);
     }
 
 

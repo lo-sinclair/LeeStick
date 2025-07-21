@@ -5,19 +5,26 @@ import android.app.Application;
 import android.app.Notification;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
+import com.google.android.material.snackbar.Snackbar;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Scheduler;
+import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Consumer;
@@ -49,20 +56,73 @@ public class MainViewModel extends AndroidViewModel {
     public void remove(Note note) {
 
         Disposable disposable = notesRepository.removeNote(note)
-        .subscribe(() -> {}, throwable -> Log.e("MainViewModel", "Ошибка удаления", throwable));
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        () -> {},
+                        throwable -> Log.e("MainViewModel", "Ошибка удаления", throwable)
+                );
+
 
         compositeDisposable.add(disposable);
      }
 
      public void removeAll() {
          Disposable disposable = notesRepository.removeAllNotes()
-                 .subscribe(() -> {}, throwable -> Log.e("MainViewModel", "Ошибка удаления", throwable));
+                 .subscribeOn(Schedulers.io())
+                 .observeOn(AndroidSchedulers.mainThread())
+                 .subscribe(
+                         () -> {}, throwable -> Log.e("MainViewModel", "Ошибка удаления", throwable)
+                 );
          compositeDisposable.add(disposable);
      }
+
+
+    public void removeAllWithCallback(View viewForSnackbar) {
+        Disposable disposable = Single.fromCallable(() -> notesRepository.getAllNotesList()) // Получаем все заметки напрямую
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        deletedNotes -> {
+                            if (deletedNotes == null || deletedNotes.isEmpty()) {
+                                Snackbar.make(viewForSnackbar, "Нет заметок для удаления", Snackbar.LENGTH_SHORT).show();
+                                return;
+                            }
+
+                            Disposable deleteDisposable = notesRepository.removeAllNotes()
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(
+                                            () -> {
+                                                Snackbar.make(viewForSnackbar, "Все заметки удалены", Snackbar.LENGTH_LONG)
+                                                        .setAction("ОТМЕНИТЬ", v -> {
+                                                            Disposable restoreDisposable = Observable.fromIterable(deletedNotes)
+                                                                    .flatMapCompletable(notesRepository::restoreNote)
+                                                                    .subscribeOn(Schedulers.io())
+                                                                    .observeOn(AndroidSchedulers.mainThread())
+                                                                    .subscribe(
+                                                                            () -> {},
+                                                                            t -> Log.e("MainViewModel", "Ошибка при восстановлении", t)
+                                                                    );
+                                                            compositeDisposable.add(restoreDisposable);
+                                                        })
+                                                        .show();
+                                            },
+                                            throwable -> Log.e("MainViewModel", "Ошибка удаления", throwable)
+                                    );
+
+                            compositeDisposable.add(deleteDisposable);
+                        },
+                        throwable -> Log.e("MainViewModel", "Ошибка получения заметок", throwable)
+                );
+
+        compositeDisposable.add(disposable);
+    }
 
     public void updateNotificationEnabled(Context context, boolean enabled) {
         if (enabled) {
             getNotes().observeForever(new Observer<List<Note>>() {
+                @RequiresApi(api = Build.VERSION_CODES.M)
                 @Override
                 public void onChanged(List<Note> notes) {
                     NotificationHelper.buildNotification(context.getApplicationContext(), notes, Notification.VISIBILITY_PUBLIC);
@@ -76,6 +136,7 @@ public class MainViewModel extends AndroidViewModel {
 
     public void updateNotificationAppearance(Context context) {
         getNotes().observeForever(new Observer<List<Note>>() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onChanged(List<Note> notes) {
                 boolean showOnLockScreen = SettingsManager.getShowOnLockscreen(context);
@@ -93,7 +154,7 @@ public class MainViewModel extends AndroidViewModel {
     @SuppressLint("CommitPrefEdits")
     public void insertInitialNotesIfFirstRun(Context context) {
         SharedPreferences prefs = context.getSharedPreferences("prefs", Context.MODE_PRIVATE);
-        //prefs.edit().putBoolean("is_first_run", true).apply();
+        prefs.edit().putBoolean("is_first_run", true).apply();
         boolean isFirstRun = prefs.getBoolean("is_first_run", true);
 
         if (isFirstRun) {
@@ -133,6 +194,5 @@ public class MainViewModel extends AndroidViewModel {
         super.onCleared();
         compositeDisposable.dispose();
     }
-
 
 }

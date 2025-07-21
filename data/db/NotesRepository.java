@@ -37,6 +37,11 @@ public class NotesRepository {
                 });
     }
 
+    /** Добавление новой заметки без расчета веса для восстановления */
+    public Completable restoreNote(Note note) {
+        return notesDao.add(note);
+    }
+
     /** Обновление заметки после редактирования */
     public Completable updateNote(Note note) {
         return notesDao.update(note);

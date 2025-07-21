@@ -3,28 +3,24 @@ package xyz.losi.leestick.notification;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.BitmapFactory;
+import android.content.Intent;
 import android.os.Build;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.RemoteViews;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.ContextCompat;
 
 import java.util.List;
 
 import xyz.losi.leestick.R;
 import xyz.losi.leestick.data.db.Note;
-import xyz.losi.leestick.data.db.NoteDatabase;
 import xyz.losi.leestick.model.NoteIconType;
-import xyz.losi.leestick.utils.Logger;
-import xyz.losi.leestick.utils.NoteFormatter;
+import xyz.losi.leestick.ui.main.MainActivity;
 import xyz.losi.leestick.utils.SettingsManager;
 
 public class NotificationHelper {
@@ -51,7 +47,13 @@ public class NotificationHelper {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public static void buildNotification(Context context, List<Note> notes, int visibility) {
+
+        if (notes == null || notes.isEmpty()) {
+            cancelNotification(context);
+            return;
+        }
 
         RemoteViews collapsedView = new RemoteViews(context.getPackageName(), R.layout.notification_notes);
         RemoteViews expandedView = new RemoteViews(context.getPackageName(), R.layout.notification_notes);
@@ -64,8 +66,8 @@ public class NotificationHelper {
         collapsedView.setInt(R.id.notificationLayout, "setBackgroundColor", backgroundColor);
         expandedView.setInt(R.id.notificationLayout, "setBackgroundColor", backgroundColor);
 
-        // Максимум 12 строк
-        int maxLines = 12;
+        // Максимум 10 строк
+        int maxLines = 10;
         for (int i = 0; i < maxLines; i++) {
             int lineId = context.getResources().getIdentifier("line" + (i + 1), "id", context.getPackageName());
             int iconId = context.getResources().getIdentifier("icon" + (i + 1), "id", context.getPackageName());
@@ -103,6 +105,23 @@ public class NotificationHelper {
 
 
         NotificationManagerCompat manager = NotificationManagerCompat.from(context);
+
+
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        // Установка действия на кнопку
+        expandedView.setOnClickPendingIntent(R.id.openAppButton, pendingIntent);
+
+        collapsedView.setViewVisibility(R.id.openAppButton, View.GONE);
+        expandedView.setViewVisibility(R.id.openAppButton, View.VISIBLE);
+
         manager.notify(NOTIFICATION_ID, builder.build());
     }
 

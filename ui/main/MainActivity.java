@@ -42,13 +42,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Создание канала (один раз, можно вынести в onCreate)
-        //NotificationManagerCompat.from(this).cancel(1);
+
         NotificationHelper.createNotificationChannel(MainActivity.this);
 
-        /*for (NoteColorType color : NoteColorType.values()) {
-            color.initEmoji(getApplicationContext());
-        }*/
 
         setContentView(R.layout.activity_main);
         viewModel = new ViewModelProvider(
@@ -169,9 +165,9 @@ public class MainActivity extends AppCompatActivity {
     private void showDeleteAllConfirmationDialog() {
         new AlertDialog.Builder(this)
                 .setTitle("Удалить все заметки?")
-                .setMessage("Это действие нельзя отменить. Вы уверены?")
+                .setMessage("Вы уверены?")
                 .setPositiveButton("Удалить", (dialog, which) -> {
-                    viewModel.removeAll();
+                    viewModel.removeAllWithCallback(recyclerViewNotes);
                 })
                 .setNegativeButton("Отмена", null)
                 .show();
