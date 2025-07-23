@@ -7,6 +7,7 @@ import java.util.List;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import xyz.losi.leestick.utils.NoteWeigher;
 
 public class NotesRepository {
     private final NotesDao notesDao;
@@ -42,52 +43,28 @@ public class NotesRepository {
         return notesDao.add(note);
     }
 
+
     /** Обновление заметки после редактирования */
     public Completable updateNote(Note note) {
         return notesDao.update(note);
     }
 
+
     /** Обработка перемещения и пересчёт веса */
     public Completable moveNote(List<Note> notes, int from, int to) {
-        if(from == to) return Completable.complete();
-
-        Note movedNote = notes.get(from);
-        notes.remove(from);
-        notes.add(to, movedNote);
-
-        float newWeight;
-        if (to==0) {
-            newWeight = notes.get(1).getWeight() - 100f;
-        } else if (to == notes.size()-1) {
-            newWeight = notes.get(notes.size() - 2).getWeight() + 100f;
-        } else {
-            float prev = notes.get(to-1).getWeight();
-            float next = notes.get(to+1).getWeight();
-            newWeight = (prev + next)/2f;
+        /*if (from < 0 || to < 0 || from >= notes.size() || to >= notes.size()) {
+            return Completable.error(new IllegalArgumentException("Invalid move indices: from=" + from + ", to=" + to));
         }
-        movedNote.setWeight(newWeight);
 
-        // Если разница между соседними весами слишком мала — пересчитай все
-        boolean needRebalance = false;
-        for(int i = 1; i < notes.size(); i++) {
-            float diff = notes.get(i).getWeight() - notes.get(i-1).getWeight();
-            if(diff < 1) {
-                needRebalance = true;
-                break;
+        if (from == to) return Completable.complete();*/
+
+        List<Note> reordered = NoteWeigher.reorderAndUpdateWeights(notes, from, to);
+
+        return Completable.fromAction(() -> {
+            for (Note note : reordered) {
+                notesDao.add(note).blockingAwait();
             }
-        }
-
-        if(needRebalance) {
-            return Completable.fromAction(() -> {
-                for(int i = 1; i < notes.size(); i++) {
-                    notes.get(i).setWeight((i + 1) * 100f);
-                    notesDao.add(notes.get(i)).blockingAwait();
-                }
-            }).subscribeOn(Schedulers.io());
-        } else {
-            return notesDao.add(movedNote)
-                    .subscribeOn(Schedulers.io());
-        }
+        }).subscribeOn(Schedulers.io());
     }
 
     /** Удаление заметки */

@@ -61,7 +61,8 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         viewHolder.textViewNote.setBackgroundColor(NoteColorType.YELLOW.getColor(context));
         viewHolder.colorViewNote.setBackgroundColor(note.getIconColor().getColor(context));
 
-        if (position >= 10) {
+        int maxLines = SettingsManager.getNotesQuantity(context);
+        if (position >= maxLines) {
             viewHolder.itemView.setAlpha(0.6f); // Полупрозрачность всей карточки
         } else {
             viewHolder.itemView.setAlpha(1f); // Нормальный вид

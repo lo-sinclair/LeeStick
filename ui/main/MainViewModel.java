@@ -42,7 +42,7 @@ public class MainViewModel extends AndroidViewModel {
     private final NotesRepository notesRepository;
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-    public MainViewModel(@NonNull Application application, NotesRepository repository) {
+    public MainViewModel(@NonNull Application application) {
         super(application);
         NotesDao dao =NoteDatabase.getInstance(application).notesDao();
         notesRepository = new NotesRepository(dao);
@@ -154,7 +154,7 @@ public class MainViewModel extends AndroidViewModel {
     @SuppressLint("CommitPrefEdits")
     public void insertInitialNotesIfFirstRun(Context context) {
         SharedPreferences prefs = context.getSharedPreferences("prefs", Context.MODE_PRIVATE);
-        prefs.edit().putBoolean("is_first_run", true).apply();
+        //prefs.edit().putBoolean("is_first_run", true).apply();
         boolean isFirstRun = prefs.getBoolean("is_first_run", true);
 
         if (isFirstRun) {
@@ -180,6 +180,10 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void onNoteMoved(List<Note> notes, int from, int to) {
+        if (notes == null || from < 0 || to < 0 || from == to || from >= notes.size() || to >= notes.size()) {
+            return;
+        }
+
         Disposable disposable = notesRepository.moveNote(notes, from, to)
                 .subscribe(
                         () -> {},

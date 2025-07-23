@@ -67,7 +67,7 @@ public class NotificationHelper {
         expandedView.setInt(R.id.notificationLayout, "setBackgroundColor", backgroundColor);
 
         // Максимум 10 строк
-        int maxLines = 10;
+        int maxLines = SettingsManager.getNotesQuantity(context);
         for (int i = 0; i < maxLines; i++) {
             int lineId = context.getResources().getIdentifier("line" + (i + 1), "id", context.getPackageName());
             int iconId = context.getResources().getIdentifier("icon" + (i + 1), "id", context.getPackageName());
@@ -93,7 +93,7 @@ public class NotificationHelper {
         }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.tulp)
+                .setSmallIcon(R.drawable.leestick_mini_500_2)
                 .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
                 .setCustomContentView(collapsedView)
                 .setCustomBigContentView(expandedView)

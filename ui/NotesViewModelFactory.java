@@ -27,9 +27,9 @@ public class NotesViewModelFactory implements ViewModelProvider.Factory {
         NotesRepository repository = new NotesRepository(dao);
 
         if (modelClass.isAssignableFrom(MainViewModel.class)) {
-            return (T) new MainViewModel(application, repository);
+            return (T) new MainViewModel(application);
         } else if (modelClass.isAssignableFrom(AddEditNoteViewModel.class)) {
-            return (T) new AddEditNoteViewModel(application, repository, repository);
+            return (T) new AddEditNoteViewModel(application);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }

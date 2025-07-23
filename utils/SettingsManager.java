@@ -68,6 +68,14 @@ public class SettingsManager {
         }
     }
 
+    public static void setNotesQuantity(Context context, int quantity) {
+        getPrefs(context).edit().putInt("notes_quantity", quantity).apply();
+    }
+
+    public static int getNotesQuantity(Context context) {
+        return getPrefs(context).getInt("notes_quantity", 10);
+    }
+
 
 }
 

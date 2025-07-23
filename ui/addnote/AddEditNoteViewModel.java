@@ -16,6 +16,7 @@ import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import xyz.losi.leestick.data.db.Note;
 import xyz.losi.leestick.data.db.NoteDatabase;
+import xyz.losi.leestick.data.db.NotesDao;
 import xyz.losi.leestick.data.db.NotesRepository;
 import xyz.losi.leestick.model.NoteIconType;
 
@@ -25,9 +26,10 @@ public class AddEditNoteViewModel extends AndroidViewModel {
     private MutableLiveData<Boolean> shouldCloseScreen = new MutableLiveData<>();
     CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-    public AddEditNoteViewModel(@NonNull Application application, NotesRepository repository, NotesRepository notesRepository) {
+    public AddEditNoteViewModel(@NonNull Application application) {
         super(application);
-        this.notesRepository = notesRepository;
+        NotesDao dao =NoteDatabase.getInstance(application).notesDao();
+        notesRepository = new NotesRepository(dao);
     }
 
     public void saveNote(Note note) {

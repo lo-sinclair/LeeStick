@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey;
 import xyz.losi.leestick.model.NoteIconType;
 
 @Entity(tableName = "notes")
-public class Note implements Parcelable {
+public class Note implements Cloneable, Parcelable{
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String text;
@@ -31,7 +31,7 @@ public class Note implements Parcelable {
         this.weight = weight;
     }
 
-    protected Note(Parcel in) {
+    public Note(Parcel in) {
         id = in.readInt();
         text = in.readString();
         String colorName = in.readString();
@@ -50,6 +50,10 @@ public class Note implements Parcelable {
             return new Note[size];
         }
     };
+
+    public Note(Note note) {
+        this(note.getId(), note.getText(), note.getIconColor(), note.getWeight());
+    }
 
     public int getId() {
         return id;

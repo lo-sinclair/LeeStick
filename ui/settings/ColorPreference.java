@@ -24,7 +24,6 @@ public class ColorPreference extends Preference {
         setLayoutResource(R.layout.preference_color);
     }
 
-
     public void showColorPickerDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Выберите цвет");
