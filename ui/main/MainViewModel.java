@@ -179,19 +179,6 @@ public class MainViewModel extends AndroidViewModel {
         }
     }
 
-    public void onNoteMoved(List<Note> notes, int from, int to) {
-        if (notes == null || from < 0 || to < 0 || from == to || from >= notes.size() || to >= notes.size()) {
-            return;
-        }
-
-        Disposable disposable = notesRepository.moveNote(notes, from, to)
-                .subscribe(
-                        () -> {},
-                        throwable -> Log.e("MainViewModel", "Ошибка при перемещении", throwable)
-                );
-
-        compositeDisposable.add(disposable);
-    }
 
     @Override
     protected void onCleared() {

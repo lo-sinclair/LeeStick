@@ -50,23 +50,6 @@ public class NotesRepository {
     }
 
 
-    /** Обработка перемещения и пересчёт веса */
-    public Completable moveNote(List<Note> notes, int from, int to) {
-        /*if (from < 0 || to < 0 || from >= notes.size() || to >= notes.size()) {
-            return Completable.error(new IllegalArgumentException("Invalid move indices: from=" + from + ", to=" + to));
-        }
-
-        if (from == to) return Completable.complete();*/
-
-        List<Note> reordered = NoteWeigher.reorderAndUpdateWeights(notes, from, to);
-
-        return Completable.fromAction(() -> {
-            for (Note note : reordered) {
-                notesDao.add(note).blockingAwait();
-            }
-        }).subscribeOn(Schedulers.io());
-    }
-
     /** Удаление заметки */
     public Completable removeNote(Note note) {
         return notesDao.remove(note.getId()).ignoreElement();

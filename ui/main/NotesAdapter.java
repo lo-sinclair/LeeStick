@@ -83,22 +83,10 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         return notes.size();
     }
 
-    public void swapItems(int from, int to) {
-        if(from < 0 || to < 0 || from >= notes.size() || to >= notes.size()) {
-            return;
-        }
-        Collections.swap(notes, from, to);
-        notifyItemMoved(from, to);
 
-        // Принудительно обновить обе позиции
-        notifyItemChanged(from);
-        notifyItemChanged(to);
-    }
-
-
-    class NotesViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder{
-        private TextView textViewNote;
-        private FrameLayout colorViewNote;
+    static class NotesViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder{
+        private final TextView textViewNote;
+        private final FrameLayout colorViewNote;
 
         public NotesViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -109,16 +97,12 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
 
         @Override
         public void onItemSelected() {
-            itemView.setAlpha(0.7f);
-            itemView.setScaleX(1.03f);
-            itemView.setScaleY(1.03f);
+
         }
 
         @Override
         public void onItemClear() {
-            itemView.setAlpha(1.0f);
-            itemView.setScaleX(1.0f);
-            itemView.setScaleY(1.0f);
+
         }
     }
 
