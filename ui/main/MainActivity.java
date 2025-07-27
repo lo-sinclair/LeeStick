@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Notification;
@@ -22,13 +21,13 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
-import io.reactivex.rxjava3.annotations.Nullable;
 import xyz.losi.leestick.R;
 import xyz.losi.leestick.data.db.Note;
 import xyz.losi.leestick.notification.NotificationHelper;
 import xyz.losi.leestick.ui.NotesViewModelFactory;
 import xyz.losi.leestick.ui.addnote.AddEditNoteActivity;
 import xyz.losi.leestick.ui.settings.SettingsActivity;
+import xyz.losi.leestick.utils.NoteItemTouchHelperCallback;
 import xyz.losi.leestick.utils.SettingsManager;
 
 public class MainActivity extends AppCompatActivity {
@@ -74,8 +73,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        ItemTouchHelper.Callback callback = new NoteItemTouchHelperCallback(
+                notesAdapter,
+                note -> viewModel.remove(note));
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(recyclerViewNotes);
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
+        /*ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
                 new ItemTouchHelper.SimpleCallback(0,
                         ItemTouchHelper.RIGHT
                 ) {
@@ -94,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
                         viewModel.remove(note);
                     }
-        });
+        });*/
 
         buttonAddNote.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        itemTouchHelper.attachToRecyclerView(recyclerViewNotes);
     }
 
     @Override

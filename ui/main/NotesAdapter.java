@@ -20,7 +20,8 @@ import xyz.losi.leestick.data.db.Note;
 import xyz.losi.leestick.model.NoteColorType;
 import xyz.losi.leestick.utils.SettingsManager;
 
-public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHolder> {
+public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHolder>
+    implements ItemTouchHelperAdapter{
 
     private List<Note> notes = new ArrayList<>();
 
@@ -84,6 +85,29 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
     }
 
 
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        if (fromPosition < toPosition) {
+            for (int i = fromPosition; i < toPosition; i++) {
+                Collections.swap(notes, i, i + 1);
+            }
+        } else {
+            for (int i = fromPosition; i > toPosition; i--) {
+                Collections.swap(notes, i, i - 1);
+            }
+        }
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
+    }
+
+
+    @Override
+    public void onItemDismiss(int position) {
+        Note note = notes.remove(position);
+        notifyItemRemoved(position);
+    }
+
+
     static class NotesViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder{
         private final TextView textViewNote;
         private final FrameLayout colorViewNote;
@@ -97,12 +121,16 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
 
         @Override
         public void onItemSelected() {
-
+            itemView.setAlpha(0.7f);
+            itemView.setScaleX(1.03f);
+            itemView.setScaleY(1.03f);
         }
 
         @Override
         public void onItemClear() {
-
+            itemView.setAlpha(1.0f);
+            itemView.setScaleX(1.0f);
+            itemView.setScaleY(1.0f);
         }
     }
 
@@ -110,8 +138,4 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         void onNoteClick(Note note);
     }
 
-    interface ItemTouchHelperViewHolder {
-        void onItemSelected(); // когда перетаскиваем
-        void onItemClear();    // когда отпущено
-    }
 }
