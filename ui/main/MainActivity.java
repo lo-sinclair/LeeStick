@@ -75,7 +75,12 @@ public class MainActivity extends AppCompatActivity {
 
         ItemTouchHelper.Callback callback = new NoteItemTouchHelperCallback(
                 notesAdapter,
-                note -> viewModel.remove(note));
+                note -> viewModel.remove(note), new OnOrderChangedListener() {
+            @Override
+            public void onOrderChanged(Note movedNote, int toPosition) {
+                viewModel.onOrderChanged(movedNote, toPosition);
+            }
+        });
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(recyclerViewNotes);
 

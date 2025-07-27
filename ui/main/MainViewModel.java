@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.core.Single;
@@ -179,6 +180,43 @@ public class MainViewModel extends AndroidViewModel {
         }
     }
 
+    public void onOrderChanged(Note movedNote, int toPosition) {
+        Disposable disposable = Single.fromCallable(() -> {
+            // Запускается в фоновом потоке
+            List<Note> currentNotes = notesRepository.getAllNotesList();
+
+            if (toPosition < 0 || toPosition >= currentNotes.size()) return null;
+
+            float newWeight;
+
+            if (toPosition == 0) {
+                newWeight = currentNotes.get(0).getWeight() - 100f;
+            } else if (toPosition == currentNotes.size() - 1) {
+                newWeight = currentNotes.get(currentNotes.size() - 1).getWeight() + 100f;
+            } else {
+                float before = currentNotes.get(toPosition - 1).getWeight();
+                float after = currentNotes.get(toPosition).getWeight();
+                newWeight = (before + after) / 2f;
+            }
+
+            movedNote.setWeight(newWeight);
+            return movedNote;
+
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMapCompletable(note -> {
+                    if (note == null) return Completable.complete();
+                    return notesRepository.updateNote(note)
+                            .subscribeOn(Schedulers.io()); // Обновление в БД тоже в фоне
+                })
+                .subscribe(
+                        () -> Log.d("MainViewModel", "Порядок заметки обновлён"),
+                        t -> Log.e("MainViewModel", "Ошибка обновления порядка", t)
+                );
+
+        compositeDisposable.add(disposable);
+    }
 
     @Override
     protected void onCleared() {

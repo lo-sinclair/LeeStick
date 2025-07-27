@@ -14,6 +14,24 @@ public class NoteWeigher {
         return (prev + next) / 2f;
     }
 
+    public static float calculateWeight(Note previousNote, Note nextNote) {
+        if (previousNote == null && nextNote == null) {
+            return 100;
+        } else if (previousNote == null) {
+            return nextNote.getWeight() - 100;
+        } else if (nextNote == null) {
+            return previousNote.getWeight() + 100;
+        } else {
+            float prev = previousNote.getWeight();
+            float next = nextNote.getWeight();
+            if (next - prev <= 1) {
+                // Нужно пересчитать все веса
+                return -1;
+            }
+            return (prev + next) / 2f;
+        }
+    }
+
     public static List<Note> reorderAndUpdateWeights(List<Note> origNotes, int from, int to){
         if (from < 0 || to < 0 || from >= origNotes.size() || to >= origNotes.size() || from == to) {
             return origNotes;
@@ -55,6 +73,8 @@ public class NoteWeigher {
         }
         return false;
     }
+
+
 
     public static List<Note> rebalance(List<Note> notes) {
         List<Note> rebalanced = new ArrayList<>();

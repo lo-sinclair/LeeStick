@@ -138,4 +138,12 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         void onNoteClick(Note note);
     }
 
+    public Note getNoteAt(int position) {
+        if (position >= 0 && position < notes.size()) {
+            return notes.get(position);
+        } else {
+            return null;
+        }
+    }
+
 }
