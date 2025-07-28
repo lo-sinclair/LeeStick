@@ -161,4 +161,17 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setTitle("Закрыть приложение?")
+                .setMessage("Вы уверены, что хотите выйти?")
+                .setPositiveButton("Да", ((dialog, which) -> {
+                    finishAffinity();
+                }))
+                .setNegativeButton("Нет", ((dialog, which) -> {
+                    dialog.dismiss();
+                }) )
+                .show();
+    }
 }
