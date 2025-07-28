@@ -36,4 +36,7 @@ public interface NotesDao {
 
     @Query("DELETE FROM notes")
     Completable removeAll();
+
+    @Update
+    void bulkUpdate(List<Note> notes);
 }

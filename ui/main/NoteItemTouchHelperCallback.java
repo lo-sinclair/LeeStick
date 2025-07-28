@@ -1,4 +1,4 @@
-package xyz.losi.leestick.utils;
+package xyz.losi.leestick.ui.main;
 
 import android.os.Build;
 
@@ -86,7 +86,7 @@ public class NoteItemTouchHelperCallback extends ItemTouchHelper.Callback {
             Note movedNote = notesAdapter.getNoteAt(viewHolder.getAdapterPosition());
             int toPosition = viewHolder.getAdapterPosition();
 
-            // Вызови метод ViewModel
+            // Вызовать метод ViewModel
             if (onOrderChangedListener != null) {
                 onOrderChangedListener.onOrderChanged(movedNote, toPosition);
             }

@@ -36,6 +36,7 @@ import xyz.losi.leestick.data.db.NotesDao;
 import xyz.losi.leestick.data.db.NotesRepository;
 import xyz.losi.leestick.model.NoteIconType;
 import xyz.losi.leestick.notification.NotificationHelper;
+import xyz.losi.leestick.utils.NoteWeigher;
 import xyz.losi.leestick.utils.SettingsManager;
 
 public class MainViewModel extends AndroidViewModel {
@@ -182,21 +183,17 @@ public class MainViewModel extends AndroidViewModel {
 
     public void onOrderChanged(Note movedNote, int toPosition) {
         Disposable disposable = Single.fromCallable(() -> {
-            // Запускается в фоновом потоке
             List<Note> currentNotes = notesRepository.getAllNotesList();
 
-            if (toPosition < 0 || toPosition >= currentNotes.size()) return null;
+            float newWeight = NoteWeigher.calculateWeight(currentNotes, toPosition);
 
-            float newWeight;
+            if (Float.isNaN(newWeight)) {
+                // Веса слишком близки — перераспределяем
+                NoteWeigher.reweightAll(currentNotes);
+                notesRepository.updateNotes(currentNotes); // нужно реализовать bulk update в NotesRepository
 
-            if (toPosition == 0) {
-                newWeight = currentNotes.get(0).getWeight() - 100f;
-            } else if (toPosition == currentNotes.size() - 1) {
-                newWeight = currentNotes.get(currentNotes.size() - 1).getWeight() + 100f;
-            } else {
-                float before = currentNotes.get(toPosition - 1).getWeight();
-                float after = currentNotes.get(toPosition).getWeight();
-                newWeight = (before + after) / 2f;
+                // Пересчитываем вес заново после ребаланса
+                newWeight = NoteWeigher.calculateWeight(currentNotes, toPosition);
             }
 
             movedNote.setWeight(newWeight);

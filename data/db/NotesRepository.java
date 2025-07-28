@@ -60,4 +60,9 @@ public class NotesRepository {
         return notesDao.removeAll();
     }
 
+
+    /** Обновление нескольких заметок */
+    public Completable updateNotes(List<Note> notes) {
+        return Completable.fromRunnable(() -> notesDao.bulkUpdate(notes));
+    }
 }

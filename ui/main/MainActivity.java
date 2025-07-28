@@ -27,7 +27,6 @@ import xyz.losi.leestick.notification.NotificationHelper;
 import xyz.losi.leestick.ui.NotesViewModelFactory;
 import xyz.losi.leestick.ui.addnote.AddEditNoteActivity;
 import xyz.losi.leestick.ui.settings.SettingsActivity;
-import xyz.losi.leestick.utils.NoteItemTouchHelperCallback;
 import xyz.losi.leestick.utils.SettingsManager;
 
 public class MainActivity extends AppCompatActivity {
