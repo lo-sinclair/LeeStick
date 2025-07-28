@@ -26,7 +26,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         // 1. Показывать на экране блокировки
         SwitchPreferenceCompat showOnLockScreenPref = new SwitchPreferenceCompat(requireContext());
-        showOnLockScreenPref.setKey("show_notification");
+        showOnLockScreenPref.setKey("show_on_lockscreen");
         showOnLockScreenPref.setTitle("Показывать на экране блокировки");
         showOnLockScreenPref.setSummary("Показывать листик на экране блокировки");
         showOnLockScreenPref.setDefaultValue(true);

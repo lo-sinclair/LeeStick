@@ -27,6 +27,7 @@ import xyz.losi.leestick.notification.NotificationHelper;
 import xyz.losi.leestick.ui.NotesViewModelFactory;
 import xyz.losi.leestick.ui.addnote.AddEditNoteActivity;
 import xyz.losi.leestick.ui.settings.SettingsActivity;
+import xyz.losi.leestick.utils.Logger;
 import xyz.losi.leestick.utils.SettingsManager;
 
 public class MainActivity extends AppCompatActivity {
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                 if (SettingsManager.getShowOnLockscreen(MainActivity.this)) {
                     NotificationHelper.buildNotification(MainActivity.this, notes, Notification.VISIBILITY_PUBLIC);
                 } else {
-                    NotificationHelper.buildNotification(MainActivity.this, notes, Notification.VISIBILITY_SECRET);
+                    NotificationHelper.cancelNotification(MainActivity.this);
                 }
             }
         });
